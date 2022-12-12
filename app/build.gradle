@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation "io.insert-koin:koin-android:$koin_version"
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
