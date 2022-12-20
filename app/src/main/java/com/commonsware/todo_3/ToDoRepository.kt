@@ -24,4 +24,6 @@ class ToDoRepository {
         }
     }
 
+    fun find(modelId: String) = items.find { it.id == modelId }
+
 }
