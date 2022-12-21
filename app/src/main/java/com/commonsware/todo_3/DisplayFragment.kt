@@ -20,6 +20,7 @@ class DisplayFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.actions_display, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -29,6 +30,7 @@ class DisplayFragment : Fragment() {
         findNavController().navigate(DisplayFragmentDirections.editModel(args.modelId))
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.edit -> {

@@ -40,7 +40,7 @@ class RosterListFragment : Fragment() {
             )
         }
 
-        adapter.submitList(motor.items)
+        adapter.submitList(motor.getItems())
         binding?.empty?.visibility = View.GONE
     }
 
