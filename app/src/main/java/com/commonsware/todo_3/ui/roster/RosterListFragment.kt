@@ -1,4 +1,4 @@
-package com.commonsware.todo_3
+package com.commonsware.todo_3.ui.roster
 
 import android.os.Bundle
 import android.view.*
@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.commonsware.todo_3.R
 import com.commonsware.todo_3.databinding.TodoRosterBinding
+import com.commonsware.todo_3.repo.ToDoModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RosterListFragment : Fragment() {
@@ -24,6 +26,7 @@ class RosterListFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.add -> {

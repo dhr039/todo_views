@@ -1,4 +1,4 @@
-package com.commonsware.todo_3
+package com.commonsware.todo_3.repo
 
 import java.time.Instant
 import java.util.*

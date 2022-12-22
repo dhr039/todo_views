@@ -1,4 +1,4 @@
-package com.commonsware.todo_3
+package com.commonsware.todo_3.ui.edit
 
 import android.os.Bundle
 import android.view.*
@@ -7,7 +7,10 @@ import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.commonsware.todo_3.R
 import com.commonsware.todo_3.databinding.TodoEditBinding
+import com.commonsware.todo_3.repo.ToDoModel
+import com.commonsware.todo_3.ui.SingleModelMotor
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 

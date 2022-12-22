@@ -1,7 +1,8 @@
-package com.commonsware.todo_3
+package com.commonsware.todo_3.ui.roster
 
 import androidx.recyclerview.widget.RecyclerView
 import com.commonsware.todo_3.databinding.TodoRowBinding
+import com.commonsware.todo_3.repo.ToDoModel
 
 class RosterRowHolder(
     private val binding: TodoRowBinding,

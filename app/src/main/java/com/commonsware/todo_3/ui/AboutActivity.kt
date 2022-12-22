@@ -1,7 +1,8 @@
-package com.commonsware.todo_3
+package com.commonsware.todo_3.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.commonsware.todo_3.R
 import com.commonsware.todo_3.databinding.ActivityAboutBinding
 
 class AboutActivity : AppCompatActivity() {

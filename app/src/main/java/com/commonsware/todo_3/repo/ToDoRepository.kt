@@ -1,4 +1,4 @@
-package com.commonsware.todo_3
+package com.commonsware.todo_3.repo
 
 class ToDoRepository {
     var items = emptyList<ToDoModel>()
