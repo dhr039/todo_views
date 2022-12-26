@@ -5,12 +5,14 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.commonsware.todo_3.R
 import com.commonsware.todo_3.databinding.TodoEditBinding
 import com.commonsware.todo_3.repo.ToDoModel
 import com.commonsware.todo_3.ui.SingleModelMotor
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -48,9 +50,9 @@ class EditFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun save() {
+    private fun save() {
         binding?.apply {
-            val model = motor.getModel()
+            val model = motor.states.value.item
             val edited = model?.copy(
                 description = desc.text.toString(),
                 isCompleted = isCompleted.isChecked,
@@ -61,13 +63,13 @@ class EditFragment : Fragment() {
                 notes = notes.text.toString()
             )
 
-            edited?.let { motor.save(it) }
+            edited.let { motor.save(it) }
         }
         navToDisplay()
     }
 
-    fun delete() {
-        val model = motor.getModel()
+    private fun delete() {
+        val model = motor.states.value.item
         model?.let { motor.delete(it) }
         navToList()
     }
@@ -101,13 +103,23 @@ class EditFragment : Fragment() {
         .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        motor.getModel()?.let {
-            binding?.apply {
-                isCompleted.isChecked = it.isCompleted
-                desc.setText(it.description)
-                notes.setText(it.notes)
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            motor.states.collect { state ->
+                //after a config change Android will automatically populate widgets, we just need to not screw it up (p.360):
+                if (savedInstanceState == null) {
+                    state.item?.let {
+                        binding?.apply {
+                            isCompleted.isChecked = it.isCompleted
+                            desc.setText(it.description)
+                            notes.setText(it.notes)
+                        }
+                    }
+                }
             }
         }
+
+
     }
 
     override fun onDestroyView() {

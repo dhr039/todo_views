@@ -1,20 +1,29 @@
 package com.commonsware.todo_3.repo
 
-class ToDoRepository {
-    var items = emptyList<ToDoModel>()
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
-    fun save(model: ToDoModel) {
-        items = if (items.any { it.id == model.id }) {
-            items.map { if (it.id == model.id) model else it }
-        } else {
-            items + model
+class ToDoRepository(
+    private val store: ToDoEntity.Store,
+    private val appScope: CoroutineScope
+) {
+    fun items(): Flow<List<ToDoModel>> =
+        store.all().map { all -> all.map { it.toModel() } }
+
+    fun find(id: String?): Flow<ToDoModel?> = store.find(id).map { it?.toModel() }
+
+    suspend fun save(model: ToDoModel) {
+        withContext(appScope.coroutineContext) {
+            store.save(ToDoEntity(model))
         }
     }
 
-    fun delete(model: ToDoModel) {
-        items = items.filter { it.id != model.id }
+    suspend fun delete(model: ToDoModel) {
+        withContext(appScope.coroutineContext) {
+            store.delete(ToDoEntity(model))
+        }
     }
-
-    fun find(modelId: String?) = items.find { it.id == modelId }
-
 }
+
