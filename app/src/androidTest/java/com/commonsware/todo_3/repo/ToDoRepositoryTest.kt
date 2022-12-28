@@ -3,7 +3,6 @@ package com.commonsware.todo_3.repo
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
@@ -17,7 +16,8 @@ import org.junit.runner.RunWith
 
 
 /**
- * TODO: Investigate why createdOn is not the same and test are failing.
+ * TODO: Investigate why createdOn is not the same(truncated) and test are failing.
+ * (page 395)
 java.lang.AssertionError:
 Expected: <ToDoModel(description=test model, id=08c19a38-8512-47a2-8ac9-a45e9d060695, isCompleted=false, notes=, createdOn=2022-12-28T11:42:25.811533Z)>
 but: was  <ToDoModel(description=test model, id=08c19a38-8512-47a2-8ac9-a45e9d060695, isCompleted=false, notes=, createdOn=2022-12-28T11:42:25.811Z)>
