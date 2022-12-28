@@ -39,12 +39,24 @@ android {
         jvmTarget = '1.8'
     }
 
+    /**
+     * Sometimes, libraries package open source license files along with their compiled code. And, sometimes,
+     * that results in collisions, where two libraries put the same license text in the same files.
+     * This snippet of Gradle code says to exclude all of those from the app that we are building. (p.397)
+     * */
+    packagingOptions {
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+    }
+
 }
 
 dependencies {
     testImplementation "org.mockito:mockito-inline:3.12.1"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1'
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1'
 
     /*https://developer.android.com/jetpack/androidx/releases/room*/
     implementation "androidx.room:room-runtime:$room_version"

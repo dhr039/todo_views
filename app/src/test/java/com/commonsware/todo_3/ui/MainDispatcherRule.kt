@@ -8,7 +8,13 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 // inspired by https://medium.com/androiddevelopers/easy-coroutines-in-android-viewmodelscope-25bffb605471
-
+/**
+ * We need to do something in our app to teach the coroutines system what to use
+when we reference Dispatchers.Main in our code. The coroutines testing library
+that we just added contains a TestCoroutineDispatcher that we can use, but we
+need to tell the coroutines system to use a TestCoroutineDispatcher for
+Dispatchers.Main. (page 385)
+ * */
 class MainDispatcherRule(paused: Boolean) : TestWatcher() {
     val dispatcher =
         TestCoroutineDispatcher().apply { if (paused) pauseDispatcher() }
