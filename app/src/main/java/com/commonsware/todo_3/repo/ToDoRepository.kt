@@ -1,19 +1,30 @@
 package com.commonsware.todo_3.repo
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
+
+enum class FilterMode { ALL, OUTSTANDING, COMPLETED }
 
 class ToDoRepository(
     private val store: ToDoEntity.Store,
     private val appScope: CoroutineScope
 ) {
-    fun items(): Flow<List<ToDoModel>> =
+    /*
+        fun items(): Flow<List<ToDoModel>> =
         store.all().map { all -> all.map { it.toModel() } }
-//            .onStart { delay(5000) }
+            .onStart { delay(5000) }
+    */
+    fun items(filterMode: FilterMode = FilterMode.ALL): Flow<List<ToDoModel>> =
+        filteredEntities(filterMode).map { all -> all.map { it.toModel() } }
+
+
+    private fun filteredEntities(filterMode: FilterMode) = when (filterMode) {
+        FilterMode.ALL -> store.all()
+        FilterMode.OUTSTANDING -> store.filtered(isCompleted = false)
+        FilterMode.COMPLETED -> store.filtered(isCompleted = true)
+    }
 
     fun find(id: String?): Flow<ToDoModel?> = store.find(id).map { it?.toModel() }
 
