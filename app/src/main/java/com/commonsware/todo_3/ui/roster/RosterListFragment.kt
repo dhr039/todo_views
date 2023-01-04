@@ -1,7 +1,12 @@
 package com.commonsware.todo_3.ui.roster
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,10 +18,22 @@ import com.commonsware.todo_3.repo.FilterMode
 import com.commonsware.todo_3.repo.ToDoModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+private const val TAG = "ToDo"
+
 class RosterListFragment : Fragment() {
     private val motor: RosterMotor by viewModel()
     private var binding: TodoRosterBinding? = null
     private val menuMap = mutableMapOf<FilterMode, MenuItem>()
+
+    private val createDoc = registerForActivityResult(ActivityResultContracts.CreateDocument()) {
+        if (it != null) {
+            motor.saveReport(it)
+        }
+    }
+
+    private fun saveReport() {
+        createDoc.launch("report.html")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +58,10 @@ class RosterListFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.save -> {
+                saveReport()
+                return true
+            }
             R.id.add -> {
                 add()
                 return true
@@ -91,7 +112,7 @@ class RosterListFragment : Fragment() {
             )
         }
 
-        //TODO: replace launchWhenStarted
+        //TODO: replace launchWhenStarted (see example here: https://developer.android.com/kotlin/flow/stateflow-and-sharedflow)
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             motor.states.collect { state ->
                 adapter.submitList(state.items)
@@ -116,6 +137,14 @@ class RosterListFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            motor.navEvents.collect { nav ->
+                when (nav) {
+                    is Nav.ViewReport -> viewReport(nav.doc)
+                }
+            }
+        }
+
     }
 
     private fun add() {
@@ -130,4 +159,26 @@ class RosterListFragment : Fragment() {
         binding = null
         super.onDestroyView()
     }
+
+    private fun viewReport(uri: Uri) {
+        safeStartActivity(
+            Intent(Intent.ACTION_VIEW, uri)
+                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        )
+    }
+
+    /**
+     * It is very likely that the user will have an app that supports
+     * ACTION_VIEW for HTML, such as a Web browser. But, it is not guaranteed.
+     * Using try/catch to avoid a crash. (p.468)
+     * */
+    private fun safeStartActivity(intent: Intent) {
+        try {
+            startActivity(intent)
+        } catch (t: Throwable) {
+            Log.e(TAG, "Exception starting $intent", t)
+            Toast.makeText(requireActivity(), R.string.oops, Toast.LENGTH_LONG).show()
+        }
+    }
+
 }

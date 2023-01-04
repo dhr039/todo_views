@@ -1,10 +1,14 @@
 package com.commonsware.todo_3
 
 import android.app.Application
+import android.text.format.DateUtils
 import com.commonsware.todo_3.repo.ToDoDatabase
 import com.commonsware.todo_3.repo.ToDoRepository
+import com.commonsware.todo_3.report.RosterReport
 import com.commonsware.todo_3.ui.SingleModelMotor
 import com.commonsware.todo_3.ui.roster.RosterMotor
+import com.github.jknack.handlebars.Handlebars
+import com.github.jknack.handlebars.Helper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
@@ -13,6 +17,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import java.time.Instant
 
 class ToDoApp : Application() {
     private val koinModule = module {
@@ -22,10 +27,23 @@ class ToDoApp : Application() {
                 get(named("appScope"))
             )
         }
-        viewModel { RosterMotor(get()) }
+        viewModel { RosterMotor(get(), get()) }
         viewModel { (modelId: String) -> SingleModelMotor(get(), modelId) }
         single { ToDoDatabase.newInstance(androidContext()) }
         single(named("appScope")) { CoroutineScope(SupervisorJob()) }
+        single {
+            Handlebars().apply {
+                registerHelper("dateFormat", Helper<Instant> { value, _ ->
+                    DateUtils.getRelativeDateTimeString(
+                        androidContext(),
+                        value.toEpochMilli(),
+                        DateUtils.MINUTE_IN_MILLIS,
+                        DateUtils.WEEK_IN_MILLIS, 0
+                    )
+                })
+            }
+        }
+        single { RosterReport(androidContext(), get(), get(named("appScope"))) }
     }
 
     override fun onCreate() {
