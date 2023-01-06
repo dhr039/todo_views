@@ -3,6 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings"
+        android:orderInCategory="90"
+        android:title="@string/settings" />
+    <item
         android:id="@+id/about"
         android:icon="@drawable/ic_about"
         android:orderInCategory="100"
