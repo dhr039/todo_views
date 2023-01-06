@@ -23,5 +23,6 @@
 {{/this}}
 ]]></string>
     <string name="oops">Sorry! Something went wrong!</string>
+    <string name="menu_share">Share</string>
 
 </resources>

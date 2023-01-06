@@ -25,6 +25,7 @@ class RosterListFragment : Fragment() {
     private var binding: TodoRosterBinding? = null
     private val menuMap = mutableMapOf<FilterMode, MenuItem>()
 
+    /* looks like ACTION_CREATE_DOCUMENT: https://developer.android.com/training/data-storage/shared/documents-files */
     private val createDoc = registerForActivityResult(ActivityResultContracts.CreateDocument()) {
         if (it != null) {
             motor.saveReport(it)
@@ -60,6 +61,10 @@ class RosterListFragment : Fragment() {
         when (item.itemId) {
             R.id.save -> {
                 saveReport()
+                return true
+            }
+            R.id.share -> {
+                motor.shareReport()
                 return true
             }
             R.id.add -> {
@@ -141,6 +146,7 @@ class RosterListFragment : Fragment() {
             motor.navEvents.collect { nav ->
                 when (nav) {
                     is Nav.ViewReport -> viewReport(nav.doc)
+                    is Nav.ShareReport -> shareReport(nav.doc)
                 }
             }
         }
@@ -167,9 +173,18 @@ class RosterListFragment : Fragment() {
         )
     }
 
+    private fun shareReport(doc: Uri) {
+        safeStartActivity(
+            Intent(Intent.ACTION_SEND)
+                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .setType("text/html")
+                .putExtra(Intent.EXTRA_STREAM, doc)
+        )
+    }
+
     /**
      * It is very likely that the user will have an app that supports
-     * ACTION_VIEW for HTML, such as a Web browser. But, it is not guaranteed.
+     * ACTION_VIEW/ACTION_SEND for HTML, such as a Web browser. But, it is not guaranteed.
      * Using try/catch to avoid a crash. (p.468)
      * */
     private fun safeStartActivity(intent: Intent) {
