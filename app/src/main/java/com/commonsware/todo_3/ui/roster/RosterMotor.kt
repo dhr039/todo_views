@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.commonsware.todo_3.BuildConfig
 import com.commonsware.todo_3.repo.FilterMode
+import com.commonsware.todo_3.repo.PrefsRepository
 import com.commonsware.todo_3.repo.ToDoModel
 import com.commonsware.todo_3.repo.ToDoRepository
 import com.commonsware.todo_3.report.RosterReport
@@ -34,7 +35,8 @@ class RosterMotor(
     private val repo: ToDoRepository,
     private val report: RosterReport,
     private val context: Application,
-    private val appScope: CoroutineScope
+    private val appScope: CoroutineScope,
+    private val prefs: PrefsRepository
 ) : ViewModel() {
 //    val states = repo.items().map { RosterViewState(it, true) }
 //        .stateIn(viewModelScope, SharingStarted.Eagerly, RosterViewState())
@@ -91,6 +93,12 @@ class RosterMotor(
 
             _states.value.let { report.generate(it.items, doc) }
             _navEvents.emit(Nav.ShareReport(doc))
+        }
+    }
+
+    fun importItems() {
+        viewModelScope.launch {
+            repo.importItems(prefs.loadWebServiceUrl())
         }
     }
 }

@@ -58,6 +58,9 @@ data class ToDoEntity(
         @Insert(onConflict = OnConflictStrategy.REPLACE)
         suspend fun save(vararg entities: ToDoEntity)
 
+        @Insert(onConflict = OnConflictStrategy.IGNORE)
+        suspend fun importItems(entities: List<ToDoEntity>)
+
         @Delete
         suspend fun delete(vararg entities: ToDoEntity)
     }

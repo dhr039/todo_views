@@ -9,7 +9,8 @@ enum class FilterMode { ALL, OUTSTANDING, COMPLETED }
 
 class ToDoRepository(
     private val store: ToDoEntity.Store,
-    private val appScope: CoroutineScope
+    private val appScope: CoroutineScope,
+    private val remoteDataSource: ToDoRemoteDataSource
 ) {
     /*
         fun items(): Flow<List<ToDoModel>> =
@@ -31,6 +32,12 @@ class ToDoRepository(
     suspend fun save(model: ToDoModel) {
         withContext(appScope.coroutineContext) {
             store.save(ToDoEntity(model))
+        }
+    }
+
+    suspend fun importItems(url: String) {
+        withContext(appScope.coroutineContext) {
+            store.importItems(remoteDataSource.load(url).map { it.toEntity() })
         }
     }
 

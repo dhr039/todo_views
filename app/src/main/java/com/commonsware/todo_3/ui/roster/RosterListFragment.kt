@@ -86,6 +86,10 @@ class RosterListFragment : Fragment() {
                 motor.load(FilterMode.OUTSTANDING)
                 return true
             }
+            R.id.importItems -> {
+                motor.importItems()
+                return true
+            }
         }
 
         return super.onOptionsItemSelected(item)
