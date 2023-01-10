@@ -16,6 +16,8 @@ import com.commonsware.todo_3.R
 import com.commonsware.todo_3.databinding.TodoRosterBinding
 import com.commonsware.todo_3.repo.FilterMode
 import com.commonsware.todo_3.repo.ToDoModel
+import com.commonsware.todo_3.ui.ErrorDialogFragment
+import com.commonsware.todo_3.ui.ErrorScenario
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val TAG = "ToDo"
@@ -155,6 +157,29 @@ class RosterListFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            motor.errorEvents.collect { error ->
+                when (error) {
+                    ErrorScenario.Import -> handleImportError()
+                    else -> {} //TODO: ???
+                }
+            }
+        }
+
+        findNavController()
+            .getBackStackEntry(R.id.rosterListFragment)
+            .savedStateHandle
+            .getLiveData<ErrorScenario>(ErrorDialogFragment.KEY_RETRY)
+            .observe(viewLifecycleOwner) { retryScenario ->
+                when (retryScenario) {
+                    ErrorScenario.Import -> {
+                        clearImportError()
+                        motor.importItems()
+                    }
+                    else -> {} //TODO: ???
+                }
+            }
+
     }
 
     private fun add() {
@@ -198,6 +223,23 @@ class RosterListFragment : Fragment() {
             Log.e(TAG, "Exception starting $intent", t)
             Toast.makeText(requireActivity(), R.string.oops, Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun handleImportError() {
+        findNavController().navigate(
+            RosterListFragmentDirections.showError(
+                getString(R.string.import_error_title),
+                getString(R.string.import_error_message),
+                ErrorScenario.Import
+            )
+        )
+    }
+
+    private fun clearImportError() {
+        findNavController()
+            .getBackStackEntry(R.id.rosterListFragment)
+            .savedStateHandle
+            .set(ErrorDialogFragment.KEY_RETRY, ErrorScenario.None)
     }
 
 }
