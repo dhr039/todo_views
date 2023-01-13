@@ -15,6 +15,6 @@ plugins {
 
 ext {
     koin_version = "3.3.0"
-    room_version = "2.4.3"
+    room_version = "2.5.0"
     moshi_version = "1.14.0"
 }
