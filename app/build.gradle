@@ -45,8 +45,9 @@ android {
      * This snippet of Gradle code says to exclude all of those from the app that we are building. (p.397)
      * */
     packagingOptions {
-        exclude 'META-INF/AL2.0'
-        exclude 'META-INF/LGPL2.1'
+        resources {
+            excludes += ['META-INF/AL2.0', 'META-INF/LGPL2.1']
+        }
     }
 
 }

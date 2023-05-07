@@ -61,7 +61,7 @@ class RosterMotor(
     }
 
     fun load(filterMode: FilterMode) {
-        job?.cancel()
+        job?.cancel() //What happens if we fail to do this? Each items() call keeps getting collected, piling up if we call load() multiple times [p.431]
 
         job = viewModelScope.launch {
             repo.items(filterMode).collect {
